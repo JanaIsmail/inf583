@@ -23,7 +23,9 @@ public class Ex1
 		JavaPairRDD<Integer,Integer> integers = input.mapToPair(s -> new Tuple2<Integer, Integer>(1, Integer.parseInt(s)));
 
     	// Reduce by keeping the largest value
-		JavaPairRDD<Integer,Integer> result = integers.reduceByKey((a,b) -> (a < b ? b : a));
+		JavaPairRDD<Integer,Integer> max = integers.reduceByKey((a,b) -> (a < b ? b : a));
+
+		JavaRDD<Integer> result = max.values();
 
 		System.out.println(result.collect());
     	result.saveAsTextFile(outputFolder);
