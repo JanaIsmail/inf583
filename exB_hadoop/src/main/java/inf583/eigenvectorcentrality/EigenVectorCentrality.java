@@ -7,6 +7,7 @@ import java.util.StringTokenizer;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
@@ -18,12 +19,12 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 public class EigenVectorCentrality {
 
-  public static ArrayList<Integer> vector = new ArrayList<>();
+  public static ArrayList<Double> vector = new ArrayList<>();
 
   public EigenVectorCentrality(){
 
     for(int i =0; i<64375; i++){
-      vector.set(i, 1/64375);
+      vector.set(i, 1.0/64375);
     }
   }
 
@@ -51,13 +52,13 @@ public class EigenVectorCentrality {
   }
 
   public static class IntSumReducer
-       extends Reducer<IntWritable,IntWritable,IntWritable,IntWritable> {
-    private final static IntWritable result = new IntWritable();
+       extends Reducer<IntWritable,IntWritable, IntWritable,DoubleWritable> {
+    private final static DoubleWritable result = new DoubleWritable();
 
     public void reduce(IntWritable key, Iterable<IntWritable> values,
                        Context context
                        ) throws IOException, InterruptedException {
-      int sum = 0;
+      double sum = 0.0;
       for (IntWritable val : values) {
         sum += vector.get(key.get());
       }
@@ -69,15 +70,16 @@ public class EigenVectorCentrality {
   }
 
   public static void main(String[] args) throws Exception {
-	  
+
+    // FAIRE UNE BOUCLE
     Configuration conf = new Configuration();
-    Job job = Job.getInstance(conf, "word count");
+    Job job = Job.getInstance(conf, "eigenvector");
     job.setJarByClass(EigenVectorCentrality.class);
     job.setMapperClass(TokenizerMapper.class);
     job.setCombinerClass(IntSumReducer.class);
     job.setReducerClass(IntSumReducer.class);
     job.setOutputKeyClass(IntWritable.class);
-    job.setOutputValueClass(IntWritable.class);
+    job.setOutputValueClass(DoubleWritable.class);
     FileInputFormat.addInputPath(job, new Path("input"));
     FileOutputFormat.setOutputPath(job, new Path("output"));
     job.waitForCompletion(true);
