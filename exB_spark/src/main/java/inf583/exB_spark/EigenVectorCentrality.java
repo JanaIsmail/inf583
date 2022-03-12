@@ -6,11 +6,10 @@ import org.apache.spark.api.java.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import scala.Tuple2;
 
-public class Ex1
+public class EigenVectorCentrality
 {
     public static void main( String[] args )
     {
