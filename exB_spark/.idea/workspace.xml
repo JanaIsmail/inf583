@@ -4,13 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8470397e-6b69-44bd-b3e9-2f5255987fa8" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../exB_hadoop/src/main/java/inf583/eigenvectorcentrality/EigenVectorCentrality.java" beforeDir="false" afterPath="$PROJECT_DIR$/../exB_hadoop/src/main/java/inf583/eigenvectorcentrality/EigenVectorCentrality.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../exB_hadoop/target/classes/inf583/eigenvectorcentrality/EigenVectorCentrality$IntSumReducer.class" beforeDir="false" afterPath="$PROJECT_DIR$/../exB_hadoop/target/classes/inf583/eigenvectorcentrality/EigenVectorCentrality$IntSumReducer.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../exB_hadoop/target/classes/inf583/eigenvectorcentrality/EigenVectorCentrality$TokenizerMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/../exB_hadoop/target/classes/inf583/eigenvectorcentrality/EigenVectorCentrality$TokenizerMapper.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../exB_hadoop/target/classes/inf583/eigenvectorcentrality/EigenVectorCentrality.class" beforeDir="false" afterPath="$PROJECT_DIR$/../exB_hadoop/target/classes/inf583/eigenvectorcentrality/EigenVectorCentrality.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../exB_threads/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/../exB_threads/src/Main.java" afterDir="false" />
-    </list>
+    <list default="true" id="8470397e-6b69-44bd-b3e9-2f5255987fa8" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -62,9 +56,9 @@
       <command value="mvn compile" />
     </option>
   </component>
-  <component name="RunManager" selected="Application.Ex1 (1)">
-    <configuration name="Ex1 (1)" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="inf583.exB_spark.Ex1" />
+  <component name="RunManager" selected="Application.EigenVectorCentrality">
+    <configuration name="EigenVectorCentrality" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="inf583.exB_spark.EigenVectorCentrality" />
       <module name="exB_spark" />
       <extension name="coverage">
         <pattern>
@@ -117,7 +111,7 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Ex1 (1)" />
+        <item itemvalue="Application.EigenVectorCentrality" />
         <item itemvalue="Application.Ex1" />
         <item itemvalue="Application.Ex3" />
         <item itemvalue="Application.Ex2" />
