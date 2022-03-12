@@ -58,7 +58,7 @@ public class Main implements Runnable {
 }
 
 class Mainmain {
-
+""
     public static void main(String[] args) throws InterruptedException {
 
         int size = 64375;
