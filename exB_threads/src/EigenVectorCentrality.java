@@ -17,7 +17,7 @@ public class EigenVectorCentrality {
         Thread[] threads = new Thread[nb_threads];
 
         int converge = 0;
-        while (converge < 1000) {
+        while (converge < 500) {
             for(int i = 0; i < nb_threads; i++) {
                 threads[i] = new Thread(new EigenVectorCentralityThread(i, vector));
                 threads[i].start();

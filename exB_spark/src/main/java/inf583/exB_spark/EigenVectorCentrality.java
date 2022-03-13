@@ -3,13 +3,12 @@ package inf583.exB_spark;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.io.Serializable;
+import java.util.*;
 
 import scala.Tuple2;
 
-public class EigenVectorCentrality
+public class EigenVectorCentrality implements Serializable
 {
     public static void main( String[] args )
     {
@@ -23,8 +22,8 @@ public class EigenVectorCentrality
     	// Load our input data.
     	JavaRDD<String> input = sc.textFile(inputFile);
 
-		// Transform into integers with the same key of 1
-		JavaPairRDD<Integer,List<String>> integers = input.mapToPair(s -> {
+		// Transform to pairs of node and list of neighbors
+		JavaPairRDD<Integer,List<String>> adjacency = input.mapToPair(s -> {
 
 			List<String> line = new ArrayList<String>(Arrays.asList(s.split(" ")));
 
@@ -33,52 +32,67 @@ public class EigenVectorCentrality
 			return new Tuple2<Integer, List<String>>(entry, line);
 		} );
 
-		JavaPairRDD<Integer,String> adjacency2 = integers.flatMapValues(s-> s);
+		// Flatten the rdd to have and rdd of edges
+		JavaPairRDD<Integer,String> edges_string = adjacency.flatMapValues(s-> s);
 
-		JavaPairRDD<Integer,Integer> adjacency  = adjacency2.mapValues(Integer::parseInt) ;
+		// Parse the strings into integers
+		JavaPairRDD<Integer,Integer> edges  = edges_string.mapValues(Integer::parseInt) ;
 
-
-
-
+		// Load the list of nodes
 		JavaRDD<String> input_idlabels = sc.textFile("idslabels.txt");
 
+		// Create the initial uniform vector
 		JavaPairRDD<Integer,Double> vector =  input_idlabels.mapToPair( s -> new Tuple2<Integer,Double>( Integer.parseInt(s.split(" ")[0]), 1.0/64375) );
 
-		JavaPairRDD<Integer,Integer> adjacency_reverse  = adjacency.mapToPair(s -> new Tuple2<Integer,Integer>(s._2, s._1));
+		// Reverse the rdd of edges to make the join
+		JavaPairRDD<Integer,Integer> edges_reverse  = edges.mapToPair(s -> new Tuple2<Integer,Integer>(s._2, s._1));
 
 
 		int converge = 0;
-		while(converge <10) {
-			JavaPairRDD<Integer, Tuple2<Integer, Double>> vectorjoined_rev = adjacency_reverse.join(vector);
+		while(converge < 10) {
+
+			// Join the reversed edges and the vector
+			JavaPairRDD<Integer, Tuple2<Integer, Double>> vectorjoined_rev = edges_reverse.join(vector);
+
+			// Keep the node id and the value of the vector
 			JavaPairRDD<Integer, Double> vectorjoined = vectorjoined_rev.mapToPair(s -> new Tuple2<Integer, Double>(s._2._1, s._2._2));
+
+			// Reduce by summing the values of the vector that correspond to the same node id
 			JavaPairRDD<Integer, Double> vectorreduced = vectorjoined.reduceByKey((a, b) -> a + b);
+
+			// Calculate the norm of the vector
 			double norm = 0;
 			List<Double> list = new ArrayList<Double>(vectorreduced.values().collect());
-
 			for (double i : list) {
 				norm += i * i;
 			}
 			norm = Math.sqrt(norm);
 			final double n = norm;
+
+			// Normalize the vector
 			vector = vectorreduced.mapToPair(s -> new Tuple2<Integer, Double>(s._1, s._2 / n));
 			converge++;
 		}
 
+		//vector.foreach(data -> System.out.println(data._1 + " " + data ._2));
 
-		vector.foreach(data -> System.out.println(data._1 + " " + data ._2));
+		// Get the max value
+		Map<Integer, Double> vectorAsMap = new HashMap<Integer, Double>(vector.collectAsMap());
+		Map.Entry<Integer, Double> maxEntry = null;
+		for (Map.Entry<Integer, Double> entry : vectorAsMap.entrySet()) {
+			if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0) {
+				maxEntry = entry;
+			}
+		}
 
-		// Reduce by keeping the largest value
-//		JavaPairRDD<Integer,Integer> max = integers.reduceByKey(
-//				(a,b) -> {
-//
-//
-//					return new Tuple2<Integer,Integer>();
-//				});
+		// Get the pages names
+		JavaPairRDD<Integer, String> labels = input_idlabels.mapToPair(s -> new Tuple2<Integer,String>(Integer.parseInt(s.split(" ")[0]), s.split(" ", 2)[1]));
 
-		//JavaRDD<Integer> result = max.values();
+		// Get the most important page
+		String page = labels.collectAsMap().get(maxEntry.getKey());
 
-		//System.out.println(result.collect());
-    	//result.saveAsTextFile(outputFolder);
+		System.out.println("The most important page in Wikipedia is " + page);
+
+    	//vector.saveAsTextFile(outputFolder);
     }
-
 }

@@ -3,11 +3,9 @@ package inf583.eigenvectorcentrality;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.StringTokenizer;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
@@ -20,30 +18,30 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 public class EigenVectorCentrality {
 
   public static class TokenizerMapper
-       extends Mapper<Object, Text, DoubleWritable, DoubleWritable>{
+          extends Mapper<Object, Text, DoubleWritable, DoubleWritable>{
 
     private final static DoubleWritable node = new DoubleWritable();
     private final static DoubleWritable edge = new DoubleWritable();
 
     public void map(Object key, Text value, Context context
-                    ) throws IOException, InterruptedException {
+    ) throws IOException, InterruptedException {
 
-        String[] line = value.toString().split(" ");
-        node.set(Double.parseDouble(line[0]));
-        for(int i =1 ;  i<line.length ;  i++ ){
-          edge.set(Double.parseDouble(line[i]));
-          context.write(node,edge);
-        }
+      String[] line = value.toString().split(" ");
+      node.set(Double.parseDouble(line[0]));
+      for(int i =1 ;  i<line.length ;  i++ ){
+        edge.set(Double.parseDouble(line[i]));
+        context.write(node,edge);
+      }
     }
   }
 
   public static class IntSumReducer
-       extends Reducer<DoubleWritable,DoubleWritable, DoubleWritable,DoubleWritable> {
+          extends Reducer<DoubleWritable,DoubleWritable, DoubleWritable,DoubleWritable> {
     private final static DoubleWritable result = new DoubleWritable();
 
     public void reduce(DoubleWritable key, Iterable<DoubleWritable> values,
                        Context context
-                       ) throws IOException, InterruptedException {
+    ) throws IOException, InterruptedException {
 
       ArrayList<Double> vector = new ArrayList<>();
       // FAIRE UNE BOUCLE
