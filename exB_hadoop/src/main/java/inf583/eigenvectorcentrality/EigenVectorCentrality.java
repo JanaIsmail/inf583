@@ -50,10 +50,13 @@ public class EigenVectorCentrality {
       }
 
       double sum = 0.0;
+      int i = 0;
       for (DoubleWritable val : values) {
         sum += vector.get((int)val.get());
+        i++;
       }
-      System.out.println(sum);
+
+      System.out.println(i);
       result.set(sum);
       context.write(key, result);
 
