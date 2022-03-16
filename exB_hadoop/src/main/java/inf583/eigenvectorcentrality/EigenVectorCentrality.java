@@ -1,8 +1,12 @@
 package inf583.eigenvectorcentrality;
 
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -20,8 +24,18 @@ public class EigenVectorCentrality {
   public static class TokenizerMapper
           extends Mapper<Object, Text, DoubleWritable, DoubleWritable>{
 
+
     private final static DoubleWritable node = new DoubleWritable();
     private final static DoubleWritable edge = new DoubleWritable();
+    private HashMap<Integer, Double> vector = new HashMap<Integer, Double>();
+
+
+    public void setup(Context context) throws IOException {
+
+      for(int i =0; i<64375; i++){
+        vector.put(i, 1.0/64375);
+      }
+    }
 
     public void map(Object key, Text value, Context context
     ) throws IOException, InterruptedException {
@@ -29,7 +43,7 @@ public class EigenVectorCentrality {
       String[] line = value.toString().split(" ");
       node.set(Double.parseDouble(line[0]));
       for(int i =1 ;  i<line.length ;  i++ ){
-        edge.set(Double.parseDouble(line[i]));
+        edge.set(vector.get(Integer.parseInt(line[i])));
         context.write(node,edge);
       }
     }
@@ -43,16 +57,12 @@ public class EigenVectorCentrality {
                        Context context
     ) throws IOException, InterruptedException {
 
-      ArrayList<Double> vector = new ArrayList<>();
-      // FAIRE UNE BOUCLE
-      for(int i =0; i<64375; i++){
-        vector.add( 1.0/64375);
-      }
+
 
       double sum = 0.0;
       int i = 0;
       for (DoubleWritable val : values) {
-        sum += vector.get((int)val.get());
+        sum += val.get();
         i++;
       }
 
@@ -62,6 +72,37 @@ public class EigenVectorCentrality {
 
     }
   }
+
+  public static class Mapper2
+          extends Mapper<Object, Text, DoubleWritable, DoubleWritable>{
+
+
+    private final static DoubleWritable node = new DoubleWritable();
+    private final static DoubleWritable edge = new DoubleWritable();
+    private HashMap<Integer, Double> vector = new HashMap<Integer, Double>();
+
+
+    public void setup(Context context) throws IOException {
+
+      String line;
+      BufferedReader reader = new BufferedReader(new FileReader("output/part-r-00000"));
+      while ((line = reader.readLine()) != null) {
+        vector.put((int)Double.parseDouble(line.split(" ")[0]),  Double.parseDouble(line.split(" ")[1]));
+      }
+    }
+
+    public void map(Object key, Text value, Context context
+    ) throws IOException, InterruptedException {
+
+      String[] line = value.toString().split(" ");
+      node.set(Double.parseDouble(line[0]));
+      for(int i =1 ;  i<line.length ;  i++ ){
+        edge.set(vector.get(Integer.parseInt(line[i])));
+        context.write(node,edge);
+      }
+    }
+  }
+
 
   public static void main(String[] args) throws Exception {
 
@@ -77,6 +118,19 @@ public class EigenVectorCentrality {
     job.setOutputValueClass(DoubleWritable.class);
     FileInputFormat.addInputPath(job, new Path("input"));
     FileOutputFormat.setOutputPath(job, new Path("output"));
+    job.waitForCompletion(true);
+
+
+
+    job = Job.getInstance(conf, "eigenvector");
+    job.setJarByClass(EigenVectorCentrality.class);
+    job.setMapperClass(Mapper2.class);
+    job.setCombinerClass(IntSumReducer.class);
+    job.setReducerClass(IntSumReducer.class);
+    job.setOutputKeyClass(DoubleWritable.class);
+    job.setOutputValueClass(DoubleWritable.class);
+    FileInputFormat.addInputPath(job, new Path("input"));
+    FileOutputFormat.setOutputPath(job, new Path("output2"));
     job.waitForCompletion(true);
 
   }
