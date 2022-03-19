@@ -43,7 +43,7 @@ public class EigenVectorCentrality {
       for(Text i : values){
         line += i.toString() + " ";
       }
-      line += Double.toString(1.0 / 64735);
+      line += Double.toString(1.0 / 64375);
       result.set(line);
       context.write(key, result);
     }
@@ -52,16 +52,21 @@ public class EigenVectorCentrality {
 
   public static class TokenizerMapper2 extends Mapper<Object, Text, IntWritable,Text>{
     private final static IntWritable node = new IntWritable();
+    private final static IntWritable edge_int = new IntWritable();
     private final static Text edge = new Text();
+    private final static Text node_text = new Text();
+
+    private final static Text vect = new Text();
 
     public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-      String[] line = value.toString().split(" ");
+      String[] line = value.toString().split(" |\t");
       edge.set(line[0]);
-      Text vect = new Text();
-      vect.set("_" + line[line.length-1]);
+      edge_int.set(Integer.parseInt(line[0]));
+      vect.set("_" + line[line.length-2]);
       for(int i =1 ;  i<line.length-2;  i++ ){
         node.set(Integer.parseInt(line[i]));
-        context.write(node,edge);
+        node_text.set(line[i]);
+        context.write(edge_int,node_text);
         context.write(node,vect);
       }
 
@@ -72,20 +77,61 @@ public class EigenVectorCentrality {
     private  Text result = new Text();
 
     public void reduce(IntWritable key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-      String edges = new String();
+      String nodes = new String();
       double vect = 0.0;
       for(Text i : values){
         if(i.toString().charAt(0) =='_'){
-          vect += Double.parseDouble(i.toString().split("_")[1]);
+          vect += Double.parseDouble(i.toString().substring(1));
         }
         else{
-          edges += i.toString() + " ";
+          nodes += i.toString() + " ";
         }
       }
-      result.set(edges  + vect);
+      result.set(nodes  + vect);
       context.write(key, result);
     }
   }
+
+
+  public static class LastMapper extends Mapper<Object, Text, IntWritable,Text>{
+    private final static IntWritable node = new IntWritable();
+    private final static Text vect = new Text();
+
+    public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
+      String[] line = value.toString().split(" |\t");
+      vect.set(line[0] + "_" + line[line.length-2]);
+      node.set(1);
+      context.write(node,vect);
+    }
+  }
+
+  public static class LastReducer extends Reducer<IntWritable,Text, IntWritable,Text> {
+    private static final  Text result = new Text();
+    private static final  IntWritable node = new IntWritable();
+
+
+    public void reduce(IntWritable key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+
+      double max = 10000000.0;
+      int id;
+      int max_id = 0;
+      double vect;
+      for(Text i : values){
+        id = Integer.parseInt(i.toString().split("_")[0]);
+        vect = Double.parseDouble(i.toString().split("_")[1]);
+
+        if(vect>max){
+          max = vect;
+          max_id = id;
+        }
+      }
+      result.set(Double.toString(max));
+      node.set(max_id);
+
+      context.write(node, result);
+    }
+  }
+
 
 
   public static void main(String[] args) throws Exception {
@@ -99,20 +145,42 @@ public class EigenVectorCentrality {
     job.setOutputKeyClass(IntWritable.class);
     job.setOutputValueClass(Text.class);
     FileInputFormat.addInputPath(job, new Path("input"));
-    FileOutputFormat.setOutputPath(job, new Path("output"));
+    FileOutputFormat.setOutputPath(job, new Path("output/output1"));
     job.waitForCompletion(true);
 
-    Configuration conf2 = new Configuration();
-    Job job2 = Job.getInstance(conf2, "eigenvector");
-    job2.setJarByClass(EigenVectorCentrality.class);
-    job2.setMapperClass(TokenizerMapper2.class);
-    job2.setCombinerClass(IntSumReducer2.class);
-    job2.setReducerClass(IntSumReducer2.class);
-    job2.setOutputKeyClass(IntWritable.class);
-    job2.setOutputValueClass(Text.class);
-    FileInputFormat.addInputPath(job2, new Path("output"));
-    FileOutputFormat.setOutputPath(job2, new Path("output2"));
-    job2.waitForCompletion(true);
+    String input = "output/output1" ;
+    String output = "output/output11";
+    int converge = 3;
+    while (converge > 0) {
+      Configuration conf2 = new Configuration();
+      Job job2 = Job.getInstance(conf2, "eigenvector");
+      job2.setJarByClass(EigenVectorCentrality.class);
+      job2.setMapperClass(TokenizerMapper2.class);
+      job2.setCombinerClass(IntSumReducer2.class);
+      job2.setReducerClass(IntSumReducer2.class);
+      job2.setOutputKeyClass(IntWritable.class);
+      job2.setOutputValueClass(Text.class);
+      FileInputFormat.addInputPath(job2, new Path(input));
+      FileOutputFormat.setOutputPath(job2, new Path(output));
+      job2.waitForCompletion(false);
+
+      input+="1";
+      output+="1";
+      converge--;
+    }
+
+
+    Configuration conf3 = new Configuration();
+    Job job3 = Job.getInstance(conf3, "eigenvector");
+    job3.setJarByClass(EigenVectorCentrality.class);
+    job3.setMapperClass(LastMapper.class);
+    job3.setCombinerClass(LastReducer.class);
+    job3.setReducerClass(LastReducer.class);
+    job3.setOutputKeyClass(IntWritable.class);
+    job3.setOutputValueClass(Text.class);
+    FileInputFormat.addInputPath(job3, new Path(input));
+    FileOutputFormat.setOutputPath(job3, new Path("final_output"));
+    job3.waitForCompletion(false);
 
 
   }
