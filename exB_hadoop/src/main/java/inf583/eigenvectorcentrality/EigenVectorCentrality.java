@@ -7,10 +7,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.DoubleWritable;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -21,92 +21,74 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 public class EigenVectorCentrality {
 
-  public static class TokenizerMapper
-          extends Mapper<Object, Text, DoubleWritable, DoubleWritable>{
+  public static class TokenizerMapper extends Mapper<Object, Text, IntWritable,Text>{
+    private final static Text node = new Text();
+    private final static IntWritable edge = new IntWritable();
 
-
-    private final static DoubleWritable node = new DoubleWritable();
-    private final static DoubleWritable edge = new DoubleWritable();
-    private HashMap<Integer, Double> vector = new HashMap<Integer, Double>();
-
-
-    public void setup(Context context) throws IOException {
-
-      for(int i =0; i<64375; i++){
-        vector.put(i, 1.0/64375);
-      }
-    }
-
-    public void map(Object key, Text value, Context context
-    ) throws IOException, InterruptedException {
-
+    public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
       String[] line = value.toString().split(" ");
-      node.set(Double.parseDouble(line[0]));
+      node.set(line[0]);
       for(int i =1 ;  i<line.length ;  i++ ){
-        edge.set(vector.get(Integer.parseInt(line[i])));
-        context.write(node,edge);
+        edge.set(Integer.parseInt(line[i]));
+        context.write(edge,node);
       }
     }
   }
 
-  public static class IntSumReducer
-          extends Reducer<DoubleWritable,DoubleWritable, DoubleWritable,DoubleWritable> {
-    private final static DoubleWritable result = new DoubleWritable();
+  public static class IntSumReducer extends Reducer<IntWritable,Text, IntWritable,Text> {
+    private  Text result = new Text();
 
-    public void reduce(DoubleWritable key, Iterable<DoubleWritable> values,
-                       Context context
-    ) throws IOException, InterruptedException {
-
-
-
-      double sum = 0.0;
-      int i = 0;
-      for (DoubleWritable val : values) {
-        sum += val.get();
-        i++;
+    public void reduce(IntWritable key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+      String line = new String();
+      for(Text i : values){
+        line += i.toString() + " ";
       }
-
-      System.out.println(i);
-      result.set(sum);
+      line += Double.toString(1.0 / 64735);
+      result.set(line);
       context.write(key, result);
+    }
+  }
+
+
+  public static class TokenizerMapper2 extends Mapper<Object, Text, IntWritable,Text>{
+    private final static IntWritable node = new IntWritable();
+    private final static Text edge = new Text();
+
+    public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
+      String[] line = value.toString().split(" ");
+      edge.set(line[0]);
+      Text vect = new Text();
+      vect.set("_" + line[line.length-1]);
+      for(int i =1 ;  i<line.length-2;  i++ ){
+        node.set(Integer.parseInt(line[i]));
+        context.write(node,edge);
+        context.write(node,vect);
+      }
 
     }
   }
 
-  public static class Mapper2
-          extends Mapper<Object, Text, DoubleWritable, DoubleWritable>{
+  public static class IntSumReducer2 extends Reducer<IntWritable,Text, IntWritable,Text> {
+    private  Text result = new Text();
 
-
-    private final static DoubleWritable node = new DoubleWritable();
-    private final static DoubleWritable edge = new DoubleWritable();
-    private HashMap<Integer, Double> vector = new HashMap<Integer, Double>();
-
-
-    public void setup(Context context) throws IOException {
-
-      String line;
-      BufferedReader reader = new BufferedReader(new FileReader("output/part-r-00000"));
-      while ((line = reader.readLine()) != null) {
-        vector.put((int)Double.parseDouble(line.split(" ")[0]),  Double.parseDouble(line.split(" ")[1]));
+    public void reduce(IntWritable key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+      String edges = new String();
+      double vect = 0.0;
+      for(Text i : values){
+        if(i.toString().charAt(0) =='_'){
+          vect += Double.parseDouble(i.toString().split("_")[1]);
+        }
+        else{
+          edges += i.toString() + " ";
+        }
       }
-    }
-
-    public void map(Object key, Text value, Context context
-    ) throws IOException, InterruptedException {
-
-      String[] line = value.toString().split(" ");
-      node.set(Double.parseDouble(line[0]));
-      for(int i =1 ;  i<line.length ;  i++ ){
-        edge.set(vector.get(Integer.parseInt(line[i])));
-        context.write(node,edge);
-      }
+      result.set(edges  + vect);
+      context.write(key, result);
     }
   }
 
 
   public static void main(String[] args) throws Exception {
-
-
 
     Configuration conf = new Configuration();
     Job job = Job.getInstance(conf, "eigenvector");
@@ -114,24 +96,24 @@ public class EigenVectorCentrality {
     job.setMapperClass(TokenizerMapper.class);
     job.setCombinerClass(IntSumReducer.class);
     job.setReducerClass(IntSumReducer.class);
-    job.setOutputKeyClass(DoubleWritable.class);
-    job.setOutputValueClass(DoubleWritable.class);
+    job.setOutputKeyClass(IntWritable.class);
+    job.setOutputValueClass(Text.class);
     FileInputFormat.addInputPath(job, new Path("input"));
     FileOutputFormat.setOutputPath(job, new Path("output"));
     job.waitForCompletion(true);
 
+    Configuration conf2 = new Configuration();
+    Job job2 = Job.getInstance(conf2, "eigenvector");
+    job2.setJarByClass(EigenVectorCentrality.class);
+    job2.setMapperClass(TokenizerMapper2.class);
+    job2.setCombinerClass(IntSumReducer2.class);
+    job2.setReducerClass(IntSumReducer2.class);
+    job2.setOutputKeyClass(IntWritable.class);
+    job2.setOutputValueClass(Text.class);
+    FileInputFormat.addInputPath(job2, new Path("output"));
+    FileOutputFormat.setOutputPath(job2, new Path("output2"));
+    job2.waitForCompletion(true);
 
-
-    job = Job.getInstance(conf, "eigenvector");
-    job.setJarByClass(EigenVectorCentrality.class);
-    job.setMapperClass(Mapper2.class);
-    job.setCombinerClass(IntSumReducer.class);
-    job.setReducerClass(IntSumReducer.class);
-    job.setOutputKeyClass(DoubleWritable.class);
-    job.setOutputValueClass(DoubleWritable.class);
-    FileInputFormat.addInputPath(job, new Path("input"));
-    FileOutputFormat.setOutputPath(job, new Path("output2"));
-    job.waitForCompletion(true);
 
   }
 }
