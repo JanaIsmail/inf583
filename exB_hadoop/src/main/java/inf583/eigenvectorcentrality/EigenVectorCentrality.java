@@ -46,10 +46,17 @@ public class EigenVectorCentrality {
     private  Text result = new Text();
 
     public void reduce(IntWritable key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-      String line = new String();
+      String line = "";
+      String vect = "";
       for(Text i : values){
-        line += i.toString() + " ";
+        if(i.toString().contains(".")){
+          vect = i.toString();
+        }
+        else{
+          line += i.toString() + " ";
+        }
       }
+      line += vect;
       line += "0.0";
       result.set(line);
       context.write(key, result);
@@ -69,13 +76,8 @@ public class EigenVectorCentrality {
       String[] line = value.toString().split(" |\t");
       dest.set(line[0]);
       dest_int.set(Integer.parseInt(line[0]));
-      for(String i : line) {
-        if(i.length() > 1 && i.charAt(1) == '.') {
-          val.set("_" + i);
-          break;
-        }
-      }
-      for(int i = 1; i < line.length - 1; i++ ){
+      val.set("_" + line[line.length-2]);
+      for(int i = 1; i < line.length - 2; i++ ){
         if(line[i].length() == 1 || line[i].charAt(1) != '.') {
           node.set(Integer.parseInt(line[i]));
           node_text.set(line[i]);
