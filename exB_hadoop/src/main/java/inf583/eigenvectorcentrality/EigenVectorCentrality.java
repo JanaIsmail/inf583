@@ -148,7 +148,7 @@ public class EigenVectorCentrality {
 
 
   public static void main(String[] args) throws Exception {
-/*
+
     Configuration conf = new Configuration();
     Job job = Job.getInstance(conf, "eigenvector");
     job.setJarByClass(EigenVectorCentrality.class);
@@ -180,7 +180,7 @@ public class EigenVectorCentrality {
       output+="1";
       converge--;
     }
- */
+
     Configuration conf3 = new Configuration();
     Job job3 = Job.getInstance(conf3, "eigenvector");
     job3.setJarByClass(EigenVectorCentrality.class);
@@ -189,7 +189,7 @@ public class EigenVectorCentrality {
     job3.setReducerClass(LastReducer.class);
     job3.setOutputKeyClass(IntWritable.class);
     job3.setOutputValueClass(Text.class);
-    FileInputFormat.addInputPath(job3, new Path("output/output1111"));
+    FileInputFormat.addInputPath(job3, new Path(input));
     FileOutputFormat.setOutputPath(job3, new Path("final_output"));
     job3.waitForCompletion(false);
 
