@@ -1,6 +1,5 @@
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.Vector;
 
 public class EigenVectorCentrality {
 
@@ -8,7 +7,7 @@ public class EigenVectorCentrality {
 
         final int size = 64375;
         final int nb_threads = 5;
-        ArrayList<Double> vector = new ArrayList<Double>();
+        Vector<Double> vector = new Vector<Double>();
 
         for(int i = 0; i < size; i++){
             vector.add(1.0/size);

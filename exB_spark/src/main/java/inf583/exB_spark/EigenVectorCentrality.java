@@ -49,7 +49,7 @@ public class EigenVectorCentrality implements Serializable
 
 
 		int converge = 0;
-		while(converge < 10) {
+		while(converge < 30) {
 
 			// Join the reversed edges and the vector
 			JavaPairRDD<Integer, Tuple2<Integer, Double>> vectorjoined_rev = edges_reverse.join(vector);

@@ -5,24 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8470397e-6b69-44bd-b3e9-2f5255987fa8" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../exB_hadoop/output/._SUCCESS.crc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../exB_hadoop/output/.part-r-00000.crc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../exB_hadoop/output/_SUCCESS" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../exB_hadoop/output/part-r-00000" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../exB_hadoop/src/main/java/inf583/eigenvectorcentrality/EigenVectorCentrality.java" beforeDir="false" afterPath="$PROJECT_DIR$/../exB_hadoop/src/main/java/inf583/eigenvectorcentrality/EigenVectorCentrality.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../exB_hadoop/target/classes/inf583/eigenvectorcentrality/EigenVectorCentrality$IntSumReducer.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../exB_hadoop/target/classes/inf583/eigenvectorcentrality/EigenVectorCentrality$TokenizerMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/../exB_hadoop/target/classes/inf583/eigenvectorcentrality/EigenVectorCentrality$TokenizerMapper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../exB_hadoop/target/classes/inf583/eigenvectorcentrality/EigenVectorCentrality$IntSumReducer2.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../exB_hadoop/target/classes/inf583/eigenvectorcentrality/EigenVectorCentrality$LastMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/../exB_hadoop/target/classes/inf583/eigenvectorcentrality/EigenVectorCentrality$LastMapper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../exB_hadoop/target/classes/inf583/eigenvectorcentrality/EigenVectorCentrality$LastReducer.class" beforeDir="false" afterPath="$PROJECT_DIR$/../exB_hadoop/target/classes/inf583/eigenvectorcentrality/EigenVectorCentrality$LastReducer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../exB_hadoop/target/classes/inf583/eigenvectorcentrality/EigenVectorCentrality$TokenizerMapper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../exB_hadoop/target/classes/inf583/eigenvectorcentrality/EigenVectorCentrality$TokenizerMapper2.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../exB_hadoop/target/classes/inf583/eigenvectorcentrality/EigenVectorCentrality$VectReducer.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../exB_hadoop/target/classes/inf583/eigenvectorcentrality/EigenVectorCentrality.class" beforeDir="false" afterPath="$PROJECT_DIR$/../exB_hadoop/target/classes/inf583/eigenvectorcentrality/EigenVectorCentrality.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/inf583/exB_spark/EigenVectorCentrality.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/inf583/exB_spark/EigenVectorCentrality.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/inf583/exA_spark/Ex2.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/inf583/exA_spark/Ex3.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/inf583/exA_spark/Ex4.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/inf583/exB_spark/Ex1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../exB_threads/out/production/exB_threads/EigenVectorCentrality.class" beforeDir="false" afterPath="$PROJECT_DIR$/../exB_threads/out/production/exB_threads/EigenVectorCentrality.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../exB_threads/out/production/exB_threads/SharedVector.class" beforeDir="false" afterPath="$PROJECT_DIR$/../exB_threads/out/production/exB_threads/SharedVector.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../exB_threads/src/EigenVectorCentrality.java" beforeDir="false" afterPath="$PROJECT_DIR$/../exB_threads/src/EigenVectorCentrality.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../exB_threads/src/EigenVectorCentralityThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/../exB_threads/src/EigenVectorCentralityThread.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../exB_threads/src/SharedVector.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,7 +53,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../exB_hadoop" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.0" />

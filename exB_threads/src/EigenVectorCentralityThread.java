@@ -2,7 +2,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.Vector;
 
 
 public class EigenVectorCentralityThread implements Runnable {
@@ -10,9 +10,9 @@ public class EigenVectorCentralityThread implements Runnable {
     public static final int NB_THREADS = 5;
 
     private int id;
-    private ArrayList<Double> vector;
+    private Vector<Double> vector;
 
-    public EigenVectorCentralityThread(int id, ArrayList<Double> vector){
+    public EigenVectorCentralityThread(int id, Vector<Double> vector){
         this.id = id;
         this.vector = vector;
     }
