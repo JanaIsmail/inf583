@@ -57,7 +57,7 @@ public class EigenVectorCentrality {
         }
       }
       line += vect;
-      line += "0.0";
+      line += " 0.0";
       result.set(line);
       context.write(key, result);
     }
@@ -126,29 +126,29 @@ public class EigenVectorCentrality {
 
     public void reduce(IntWritable key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 
-      double max = 10000000.0;
+      double max = 0.0;
       int id;
       int max_id = 0;
       double vect;
       for(Text i : values){
+        if(i.toString().split("_").length != 2) continue;
         id = Integer.parseInt(i.toString().split("_")[0]);
         vect = Double.parseDouble(i.toString().split("_")[1]);
 
-        if(vect>max){
+        if(vect > max){
           max = vect;
           max_id = id;
         }
+        result.set(Double.toString(max));
+        node.set(max_id);
       }
-      result.set(Double.toString(max));
-      node.set(max_id);
-
       context.write(node, result);
     }
   }
 
 
   public static void main(String[] args) throws Exception {
-
+/*
     Configuration conf = new Configuration();
     Job job = Job.getInstance(conf, "eigenvector");
     job.setJarByClass(EigenVectorCentrality.class);
@@ -180,8 +180,7 @@ public class EigenVectorCentrality {
       output+="1";
       converge--;
     }
-
-    /*
+ */
     Configuration conf3 = new Configuration();
     Job job3 = Job.getInstance(conf3, "eigenvector");
     job3.setJarByClass(EigenVectorCentrality.class);
@@ -190,10 +189,9 @@ public class EigenVectorCentrality {
     job3.setReducerClass(LastReducer.class);
     job3.setOutputKeyClass(IntWritable.class);
     job3.setOutputValueClass(Text.class);
-    FileInputFormat.addInputPath(job3, new Path(input));
+    FileInputFormat.addInputPath(job3, new Path("output/output1111"));
     FileOutputFormat.setOutputPath(job3, new Path("final_output"));
     job3.waitForCompletion(false);
 
- */
   }
 }
