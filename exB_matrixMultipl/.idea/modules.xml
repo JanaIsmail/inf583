@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/exB_spark.iml" filepath="$PROJECT_DIR$/exB_spark.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../exB_matrixMultipl.iml" filepath="$PROJECT_DIR$/../exB_matrixMultipl.iml" />
     </modules>
   </component>
 </project>

@@ -49,7 +49,7 @@ public class EigenVectorCentrality implements Serializable
 
 
 		int converge = 0;
-		while(converge < 30) {
+		while(converge < 9) {
 
 			// Join the reversed edges and the vector
 			JavaPairRDD<Integer, Tuple2<Integer, Double>> vectorjoined_rev = edges_reverse.join(vector);
@@ -84,6 +84,8 @@ public class EigenVectorCentrality implements Serializable
 				maxEntry = entry;
 			}
 		}
+
+		System.out.println(maxEntry.toString());
 
 		// Get the pages names
 		JavaPairRDD<Integer, String> labels = input_idlabels.mapToPair(s -> new Tuple2<Integer,String>(Integer.parseInt(s.split(" ")[0]), s.split(" ", 2)[1]));

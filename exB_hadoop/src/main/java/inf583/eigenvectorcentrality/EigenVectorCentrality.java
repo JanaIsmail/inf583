@@ -162,7 +162,7 @@ public class EigenVectorCentrality {
 
     String input = "output/output1" ;
     String output = "output/output11";
-    int converge = 3;
+    int converge = 1;
     while (converge > 0) {
       Configuration conf2 = new Configuration();
       Job job2 = Job.getInstance(conf2, "eigenvector");
